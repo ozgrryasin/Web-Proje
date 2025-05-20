@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineVibe - Modern Film ve Dizi Platformu</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Temel Watchlist Buton Stilleri */
+        .watchlist-btn {
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          background: rgba(0,0,0,0.7);
+          color: white;
+          border: none;
+          border-radius: 50%;
+          width: 36px;
+          height: 36px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          cursor: pointer;
+          z-index: 10;
+          transition: all 0.3s;
+        }
+        
+        .watchlist-btn:hover {
+          background: rgba(98, 0, 238, 0.8);
+        }
+        
+        .watchlist-btn.in-watchlist {
+          background: rgba(98, 0, 238, 0.8);
+        }
+        
+        .watchlist-btn svg {
+          width: 20px;
+          height: 20px;
+        }
+        
+        .card-img {
+          position: relative;
+        }
+        
+        /* İzleme Listesi Sayfası Stilleri */
+        #watchlist-items {
+          margin-top: 2rem;
+        }
+        
+        .remove-btn {
+          margin-top: 10px;
+          background-color: #e74c3c;
+        }
+        
+        .remove-btn:hover {
+          background-color: #c0392b;
+        }
+        </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">CineVibe</a>
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Film, dizi veya içerik ara...">
+                    <div id="searchResults" class="search-results"></div>
+                </div>
+                <div class="user-menu">
+                  <a href="login.html" class="btn">Giriş Yap</a>
+              </div>
+            </div>
+        </div>
+    </header>
+    
+    <nav class="container">
+        <ul class="nav-menu">
+            <li class="dropdown">
+                <a href="#">Kategoriler</a>
+                <div class="dropdown-content" id="categoryDropdown">
+                    <a href="#" data-category="all">Tümü</a>
+                    <a href="#" data-category="Aksiyon">Aksiyon</a>
+                    <a href="#" data-category="Komedi">Komedi</a>
+                    <a href="#" data-category="Dram">Dram</a>
+                    <a href="#" data-category="Bilim Kurgu">Bilim Kurgu</a>
+                    <a href="#" data-category="Fantastik">Fantastik</a>
+                    <a href="#" data-category="Romantik">Romantik</a>
+                    <a href="#" data-category="Macera">Macera</a>
+                    <a href="#" data-category="Suç">Suç</a>
+                </div>
+            </li>
+            <li><a href="#" id="showMovies">Filmler</a></li>
+            <li><a href="#" id="showSeries">Diziler</a></li>
+            <li><a href="index.html">Ana Sayfa</a></li>
+        </ul>
+    </nav>
+    
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Sınırsız Film ve Dizi Keyfine Hoş Geldiniz</h1>
+            <p>En sevdiğiniz film ve dizileri keşfedin. Kategorilere göz atın, puanlamaları inceleyin ve yeni içerikler bulun.</p>
+            <a href="#popular-movies" class="btn">Hemen Keşfet</a>
+        </div>
+    </section>
+    
+    <main class="container">
+        <div id="content-container">
+            <!-- Ana sayfa içeriği -->
+            <div id="homepage-content">
+                <h2 class="section-title" id="popular-movies">En Popüler Filmler</h2>
+                <div class="movie-grid" id="movie-grid">
+                    <!-- JavaScript ile doldurulacak -->
+                </div>
+                
+                <h2 class="section-title">En Popüler Diziler</h2>
+                <div class="series-grid" id="series-grid">
+                    <!-- JavaScript ile doldurulacak -->
+                </div>
+            </div>
+
+            <!-- Filtreli içerik için konteyner -->
+            <div id="filtered-content" style="display: none;">
+                <h2 class="section-title" id="filtered-title">Tüm İçerikler</h2>
+                <div class="filter-container">
+                    <select id="category-filter" class="category-filter">
+                        <option value="all">Tüm Kategoriler</option>
+                        <option value="Aksiyon">Aksiyon</option>
+                        <option value="Komedi">Komedi</option>
+                        <option value="Dram">Dram</option>
+                        <option value="Bilim Kurgu">Bilim Kurgu</option>
+                        <option value="Fantastik">Fantastik</option>
+                        <option value="Romantik">Romantik</option>
+                        <option value="Macera">Macera</option>
+                        <option value="Suç">Suç</option>
+                    </select>
+                </div>
+                <div class="content-grid" id="filtered-grid"></div>
+            </div>
+        </div>
+
+        <!-- İçerik detay sayfası konteyner -->
+        <div id="detail-container" style="display: none;">
+            <div class="detail-back">
+                <button id="back-button" class="btn-back">← Geri Dön</button>
+            </div>
+            <div class="detail-content">
+                <div class="detail-header">
+                    <h1 id="detail-title"></h1>
+                    <div class="detail-meta">
+                        <span id="detail-year"></span>
+                        <span class="detail-divider">|</span>
+                        <span id="detail-categories"></span>
+                        <span class="detail-divider">|</span>
+                        <span class="imdb-badge" id="detail-rating"></span>
+                    </div>
+                </div>
+                
+                <div class="detail-trailer">
+                    <iframe id="youtube-frame" width="100%" height="500" frameborder="0" allowfullscreen></iframe>
+                </div>
+                
+                <div class="detail-info">
+                    <div class="detail-section">
+                        <h3>Konusu</h3>
+                        <p id="detail-description"></p>
+                        <!-- Ek detay bilgileri buraya eklenecek -->
+                    </div>
+                    
+                    <div class="detail-section">
+                        <h3>Başrol Oyuncuları</h3>
+                        <div class="detail-cast" id="detail-cast"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>CineVibe</h3>
+                    <p>En iyi film ve dizi içeriklerini keşfetmeniz için buradayız. Yeni trendleri takip edin, en popüler içerikleri kaçırmayın.</p>
+                    <div class="social-links">
+                        <a href="#">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+                        </a>
+                        <a href="#">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
+                        </a>
+                        <a href="#">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Bağlantılar</h3>
+                    <ul>
+                        <li><a href="index.html">Ana Sayfa</a></li>
+                        <li><a href="#" id="footer-movies">Filmler</a></li>
+                        <li><a href="#" id="footer-series">Diziler</a></li>
+                        <li><a href="#">Kategoriler</a></li>
+                        <li><a href="#">Hakkımızda</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>İletişim</h3>
+                    <ul>
+                        <li><a href="#">Yardım Merkezi</a></li>
+                        <li><a href="#" id="contact-link">İletişim Formu</a></li>
+                        <li><a href="#">Gizlilik Politikası</a></li>
+                        <li><a href="#">Koşullar ve Şartlar</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>&copy; 2024 CineVibe. Tüm hakları saklıdır.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="script.js"></script>
+    <script src="comments.js"></script>
+    <script>
+        // Hata ayıklama işlevi
+        function debug(message) {
+          console.log("Watchlist Debug: " + message);
+        }
+      
+        // Sayfa yüklendiğinde
+        document.addEventListener('DOMContentLoaded', function() {
+          debug("Script başlatıldı");
+          
+          // İzleme listesini localStorage'dan al
+          let watchlist = [];
+          try {
+            const storedData = localStorage.getItem('cinevibe-watchlist');
+            watchlist = storedData ? JSON.parse(storedData) : [];
+            debug("Watchlist yüklendi: " + watchlist.length + " öğe");
+          } catch (error) {
+            debug("LocalStorage hatası: " + error.message);
+          }
+      
+          // contentDatabase'e erişim kontrolü
+          if (typeof window.contentDatabase === 'undefined') {
+            debug("UYARI: contentDatabase tanımlı değil, window.contentDatabase olarak kontrol ediliyor");
+            
+            // Global scope'da kontrol et
+            if (typeof contentDatabase !== 'undefined') {
+              debug("contentDatabase global scope'da bulundu, window.contentDatabase'e atanıyor");
+              window.contentDatabase = contentDatabase;
+            } else {
+              debug("HATA: contentDatabase bulunamadı! İzleme listesi tam olarak çalışmayacak");
+              // Dummy veri oluştur
+              window.contentDatabase = {
+                movies: [],
+                series: []
+              };
+            }
+          }
+      
+          // Menüye izleme listesi öğesi ekle
+          addWatchlistMenuItem();
+          
+          // Film/dizi kartlarına buton ekle
+          setTimeout(function() {
+            addWatchlistButtons();
+          }, 500);
+      
+          // İzleme listesi sayfası oluştur
+          createWatchlistPage();
+      
+          // Navigasyon menüsüne izleme listesi öğesi ekleme
+          function addWatchlistMenuItem() {
+            debug("Menüye izleme listesi öğesi ekleniyor");
+            const navMenu = document.querySelector('.nav-menu');
+            
+            if (navMenu) {
+              // Eğer öğe zaten eklenmediyse
+              if (!document.getElementById('watchlist-nav-item')) {
+                const watchlistItem = document.createElement('li');
+                watchlistItem.id = 'watchlist-nav-item';
+                watchlistItem.innerHTML = `<a href="#" id="show-watchlist">İzleme Listem</a>`;
+                
+                const homepageItem = navMenu.querySelector('li:last-child');
+                if (homepageItem) {
+                  navMenu.insertBefore(watchlistItem, homepageItem);
+                } else {
+                  navMenu.appendChild(watchlistItem);
+                }
+                
+                // Tıklama olayı ekle
+                const showWatchlistLink = document.getElementById('show-watchlist');
+                if (showWatchlistLink) {
+                  showWatchlistLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    debug("İzleme listesi linki tıklandı");
+                    showWatchlistPage();
+                  });
+                } else {
+                  debug("HATA: show-watchlist öğesi bulunamadı");
+                }
+              } else {
+                debug("Watchlist menü öğesi zaten var");
+              }
+            } else {
+              debug("HATA: .nav-menu bulunamadı");
+            }
+          }
+      
+          // Film ve dizi kartlarına izleme listesi butonu ekleme
+          function addWatchlistButtons() {
+            debug("Kartlara izleme listesi butonları ekleniyor");
+            
+            // İlk olarak stil ekle
+            if (!document.getElementById('watchlist-styles')) {
+              const style = document.createElement('style');
+              style.id = 'watchlist-styles';
+              style.textContent = `
+                .watchlist-btn {
+                  position: absolute;
+                  top: 10px;
+                  right: 10px;
+                  width: 36px;
+                  height: 36px;
+                  border-radius: 50%;
+                  background-color: rgba(0,0,0,0.7);
+                  border: none;
+                  color: white;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  cursor: pointer;
+                  z-index: 10;
+                }
+                .watchlist-btn:hover {
+                  background-color: rgba(98,0,238,0.8);
+                }
+                .watchlist-btn.in-watchlist {
+                  background-color: rgba(98,0,238,0.8);
+                }
+                .watchlist-btn svg {
+                  width: 20px;
+                  height: 20px;
+                }
+                .card-img {
+                  position: relative;
+                }
+                .remove-watchlist-btn {
+                  display: block;
+                  width: 100%;
+                  margin-top: 10px;
+                  padding: 8px;
+                  background-color: #e74c3c;
+                  color: white;
+                  border: none;
+                  border-radius: 4px;
+                  cursor: pointer;
+                }
+                .remove-watchlist-btn:hover {
+                  background-color: #c0392b;
+                }
+                #watchlist-page {
+                  padding: 20px 0;
+                }
+                #watchlist-back {
+                  margin-bottom: 20px;
+                }
+              `;
+              document.head.appendChild(style);
+              debug("Watchlist stilleri eklendi");
+            }
+            
+            // Tüm kartları bul
+            const cards = document.querySelectorAll('.movie-card, .series-card');
+            debug("Bulunan kart sayısı: " + cards.length);
+            
+            cards.forEach(function(card, index) {
+              try {
+                // Karta daha önce buton eklenmediyse ekle
+                if (!card.querySelector('.watchlist-btn')) {
+                  const contentId = card.getAttribute('data-id');
+                  const contentType = card.getAttribute('data-type');
+                  
+                  if (!contentId || !contentType) {
+                    debug("HATA: Kart #" + index + " için data-id veya data-type bulunamadı");
+                    return;
+                  }
+                  
+                  const cardImg = card.querySelector('.card-img');
+                  if (!cardImg) {
+                    debug("HATA: Kart #" + index + " için .card-img bulunamadı");
+                    return;
+                  }
+                  
+                  // Buton oluştur
+                  const watchlistBtn = document.createElement('button');
+                  watchlistBtn.className = 'watchlist-btn';
+                  watchlistBtn.setAttribute('title', 'İzleme Listesine Ekle/Çıkar');
+                  watchlistBtn.setAttribute('data-id', contentId);
+                  watchlistBtn.setAttribute('data-type', contentType);
+                  
+                  // İçerik listede mi kontrol et
+                  const isInWatchlist = watchlist.some(item => item.id === contentId && item.type === contentType);
+                  
+                  if (isInWatchlist) {
+                    watchlistBtn.classList.add('in-watchlist');
+                    watchlistBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>';
+                  } else {
+                    watchlistBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>';
+                  }
+                  
+                  // Tıklama olayı ekle
+                  watchlistBtn.onclick = function(e) {
+                    e.stopPropagation();
+                    debug("Watchlist butonuna tıklandı: " + contentId);
+                    toggleWatchlistItem(contentId, contentType, this);
+                  };
+                  
+                  cardImg.appendChild(watchlistBtn);
+                  debug("Kart #" + index + " için buton eklendi");
+                }
+              } catch (err) {
+                debug("HATA: Kart #" + index + " işlenirken: " + err.message);
+              }
+            });
+      
+            // Detay sayfasındaki kategorilere de aynı stilleri uygula
+            const detailCategories = document.querySelector('.detail-categories');
+            if (detailCategories && !detailCategories.classList.contains('watchlist-styled')) {
+              detailCategories.classList.add('watchlist-styled');
+              debug("Detay sayfası kategorileri stillendirildi");
+            }
+          }
+      
+          // İzleme listesine ekleme/çıkarma
+          function toggleWatchlistItem(contentId, contentType, button) {
+            debug("İzleme listesi değiştiriliyor: " + contentId);
+            
+            try {
+              // İçerik zaten listede mi kontrol et
+              const existingIndex = watchlist.findIndex(item => item.id === contentId && item.type === contentType);
+              
+              if (existingIndex > -1) {
+                // Listeden çıkar
+                watchlist.splice(existingIndex, 1);
+                
+                if (button) {
+                  button.classList.remove('in-watchlist');
+                  button.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>';
+                }
+                
+                alert('İçerik izleme listenizden çıkarıldı');
+                debug("İçerik listeden çıkarıldı");
+              } else {
+                // İçeriği database'den bul
+                let content;
+                
+                if (contentType === 'movie') {
+                  content = window.contentDatabase.movies.find(m => m.id === contentId);
+                  if (!content) debug("HATA: Film bulunamadı: " + contentId);
+                } else if (contentType === 'series') {
+                  content = window.contentDatabase.series.find(s => s.id === contentId);
+                  if (!content) debug("HATA: Dizi bulunamadı: " + contentId);
+                }
+                
+                if (content) {
+                  // Listeye ekle
+                  watchlist.push({
+                    id: contentId,
+                    type: contentType,
+                    title: content.title,
+                    image: content.image,
+                    year: content.year,
+                    categories: content.categories || [],
+                    rating: content.rating
+                  });
+                  
+                  if (button) {
+                    button.classList.add('in-watchlist');
+                    button.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>';
+                  }
+                  
+                  alert('İçerik izleme listenize eklendi');
+                  debug("İçerik listeye eklendi");
+                } else {
+                  debug("HATA: Eklenecek içerik bulunamadı");
+                  alert('İçerik eklenirken bir hata oluştu');
+                }
+              }
+              
+              // LocalStorage'a kaydet
+              localStorage.setItem('cinevibe-watchlist', JSON.stringify(watchlist));
+              
+              // Eğer watchlist sayfası açıksa, güncelle
+              const watchlistPage = document.getElementById('watchlist-page');
+              if (watchlistPage && watchlistPage.style.display === 'block') {
+                renderWatchlistItems();
+              }
+            } catch (err) {
+              debug("HATA: toggleWatchlistItem fonksiyonunda: " + err.message);
+              alert('İşlem sırasında bir hata oluştu.');
+            }
+          }
+      
+          // İzleme listesi sayfası oluşturma
+          function createWatchlistPage() {
+            debug("İzleme listesi sayfası oluşturuluyor");
+            
+            const contentContainer = document.getElementById('content-container');
+            if (!contentContainer) {
+              debug("HATA: content-container bulunamadı");
+              return;
+            }
+            
+            // Eğer sayfa zaten oluşturulmadıysa oluştur
+            if (!document.getElementById('watchlist-page')) {
+              const watchlistPage = document.createElement('div');
+              watchlistPage.id = 'watchlist-page';
+              watchlistPage.style.display = 'none';
+              
+              watchlistPage.innerHTML = `
+                <div id="watchlist-back">
+                  <button id="watchlist-back-btn" class="btn-back">← Geri Dön</button>
+                </div>
+                <h2 class="section-title">İzleme Listem</h2>
+                <div id="watchlist-items" class="content-grid"></div>
+                <div id="empty-watchlist" class="no-content" style="display: none;">
+                  <p>İzleme listenizde henüz içerik bulunmuyor.</p>
+                  <a href="#" id="explore-content-btn" class="btn">İçerikleri Keşfet</a>
+                </div>
+              `;
+              
+              contentContainer.appendChild(watchlistPage);
+              
+              // Geri butonu işlevselliği
+              const backBtn = document.getElementById('watchlist-back-btn');
+              if (backBtn) {
+                backBtn.onclick = function() {
+                  debug("Geri dönme butonu tıklandı");
+                  loadHomepageContent();
+                };
+              } else {
+                debug("HATA: watchlist-back-btn bulunamadı");
+              }
+              
+              // İçerikleri keşfet butonu
+              const exploreBtn = document.getElementById('explore-content-btn');
+              if (exploreBtn) {
+                exploreBtn.onclick = function(e) {
+                  e.preventDefault();
+                  debug("İçerikleri keşfet butonu tıklandı");
+                  loadHomepageContent();
+                };
+              } else {
+                debug("HATA: explore-content-btn bulunamadı");
+              }
+              
+              debug("İzleme listesi sayfası oluşturuldu");
+            } else {
+              debug("İzleme listesi sayfası zaten mevcut");
+            }
+          }
+      
+          // İzleme listesi sayfasını gösterme
+          function showWatchlistPage() {
+            debug("İzleme listesi sayfası gösteriliyor");
+            
+            try {
+              // Tüm içerik bölümlerini gizle
+              const homepageContent = document.getElementById('homepage-content');
+              const filteredContent = document.getElementById('filtered-content');
+              const detailContainer = document.getElementById('detail-container');
+              
+              if (homepageContent) homepageContent.style.display = 'none';
+              if (filteredContent) filteredContent.style.display = 'none';
+              if (detailContainer) detailContainer.style.display = 'none';
+              
+              // Statik sayfa varsa gizle
+              if (typeof pageContainer !== 'undefined' && pageContainer) {
+                const contentContainer = document.getElementById('content-container');
+                if (contentContainer && contentContainer.contains(pageContainer)) {
+                  contentContainer.removeChild(pageContainer);
+                  if (typeof window.pageContainer !== 'undefined') {
+                    window.pageContainer = null;
+                  }
+                }
+              }
+              
+              // İzleme listesi sayfasını göster
+              const watchlistPage = document.getElementById('watchlist-page');
+              if (watchlistPage) {
+                watchlistPage.style.display = 'block';
+                renderWatchlistItems();
+              } else {
+                debug("HATA: watchlist-page bulunamadı");
+              }
+              
+              // Sayfa başına kaydır
+              window.scrollTo(0, 0);
+            } catch (err) {
+              debug("HATA: showWatchlistPage fonksiyonunda: " + err.message);
+            }
+          }
+      
+          // İzleme listesi içeriklerini render etme
+          function renderWatchlistItems() {
+            debug("İzleme listesi içerikleri render ediliyor");
+            
+            try {
+              const watchlistItems = document.getElementById('watchlist-items');
+              const emptyWatchlist = document.getElementById('empty-watchlist');
+              
+              if (!watchlistItems || !emptyWatchlist) {
+                debug("HATA: watchlist-items veya empty-watchlist bulunamadı");
+                return;
+              }
+              
+              // İçeriği temizle
+              watchlistItems.innerHTML = '';
+              
+              // Liste boş mu kontrol et
+              if (watchlist.length === 0) {
+                debug("İzleme listesi boş");
+                watchlistItems.style.display = 'none';
+                emptyWatchlist.style.display = 'block';
+                return;
+              }
+              
+              // İçerikleri göster
+              watchlistItems.style.display = 'grid';
+              emptyWatchlist.style.display = 'none';
+              
+              // Her içerik için kart oluştur
+              watchlist.forEach(function(item, index) {
+                try {
+                  const card = document.createElement('div');
+                  card.className = item.type === 'movie' ? 'movie-card' : 'series-card';
+                  card.setAttribute('data-id', item.id);
+                  card.setAttribute('data-type', item.type);
+                  
+                  card.innerHTML = `
+                    <div class="card-img">
+                      <img src="${item.image}" alt="${item.title}" onerror="this.src='https://via.placeholder.com/280x400?text=Görsel+Yok'; this.onerror='';">
+                    </div>
+                    <div class="card-content">
+                      <div class="card-category">
+                        ${Array.isArray(item.categories) ? item.categories.map(cat => `<span class="category-tag">${cat}</span>`).join('') : ''}
+                      </div>
+                      <h3 class="card-title">${item.title} (${item.year || '?'})</h3>
+                      <div class="card-rating">
+                        <span class="imdb-badge">${item.rating || '?'}</span>
+                      </div>
+                      <button class="remove-watchlist-btn" data-id="${item.id}" data-type="${item.type}">İzleme Listemden Çıkar</button>
+                    </div>
+                  `;
+                  
+                  watchlistItems.appendChild(card);
+                  
+                  // Karta tıklama işlevi
+                  card.addEventListener('click', function(e) {
+                    // Silme butonuna tıklanmadıysa detay sayfasını aç
+                    if (!e.target.classList.contains('remove-watchlist-btn')) {
+                      debug("Watchlist kartına tıklandı: " + item.id);
+                      
+                      let content;
+                      if (item.type === 'movie') {
+                        content = window.contentDatabase.movies.find(m => m.id === item.id);
+                      } else if (item.type === 'series') {
+                        content = window.contentDatabase.series.find(s => s.id === item.id);
+                      }
+                      
+                      if (content) {
+                        debug("İçerik bulundu, detay sayfası açılıyor");
+                        showDetailPage(content, item.type);
+                      } else {
+                        debug("HATA: Detay için içerik bulunamadı");
+                        alert('İçerik detayları yüklenirken bir hata oluştu');
+                      }
+                    }
+                  });
+                  
+                  debug("İçerik #" + index + " render edildi");
+                } catch (itemErr) {
+                  debug("HATA: İçerik #" + index + " render edilirken: " + itemErr.message);
+                }
+              });
+              
+              // Silme butonlarına tıklama olayları
+              const removeButtons = document.querySelectorAll('.remove-watchlist-btn');
+              removeButtons.forEach(function(btn) {
+                btn.onclick = function(e) {
+                  e.stopPropagation(); // Karta tıklamayı engelle
+                  
+                  const id = this.getAttribute('data-id');
+                  const type = this.getAttribute('data-type');
+                  
+                  debug("Silme butonuna tıklandı: " + id);
+                  
+                  const itemIndex = watchlist.findIndex(i => i.id === id && i.type === type);
+                  if (itemIndex > -1) {
+                    watchlist.splice(itemIndex, 1);
+                    localStorage.setItem('cinevibe-watchlist', JSON.stringify(watchlist));
+                    renderWatchlistItems();
+                    alert('İçerik izleme listenizden çıkarıldı');
+                  }
+                };
+              });
+              
+              debug("Toplam " + watchlist.length + " içerik render edildi");
+            } catch (err) {
+              debug("HATA: renderWatchlistItems fonksiyonunda: " + err.message);
+            }
+          }
+      
+          // Sayfa değişikliklerini izle
+          try {
+            const observer = new MutationObserver(function(mutations) {
+              mutations.forEach(function(mutation) {
+                if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+                  setTimeout(function() {
+                    addWatchlistButtons();
+                  }, 300);
+                }
+              });
+            });
+            
+            const contentContainer = document.getElementById('content-container');
+            if (contentContainer) {
+              observer.observe(contentContainer, { childList: true, subtree: true });
+              debug("DOM değişikliklerini izleme başlatıldı");
+            }
+          } catch (err) {
+            debug("HATA: MutationObserver oluşturulurken: " + err.message);
+          }
+        });
+      </script>
+      <script>
+        document.getElementById('contact-link').addEventListener('click', function(e) {
+          e.preventDefault();
+          window.location.href = 'iletisim.html';
+        });
+        </script>
+</body>
+</html>
