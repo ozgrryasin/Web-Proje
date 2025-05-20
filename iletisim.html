@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>İletişim - CineVibe</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .contact-page {
+      padding: 4rem 1rem;
+    }
+    .contact-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .alert {
+      display: none;
+      padding: 1rem;
+      margin-bottom: 2rem;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: 500;
+    }
+    .alert.success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .alert.error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .error-input {
+      border-color: #e74c3c;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="header-content">
+        <a href="index.html" class="logo">CineVibe</a>
+        <div class="user-menu">
+          <a href="index.html" class="btn">Ana Sayfa</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container contact-page">
+    <div class="contact-header">
+      <h1>Bizimle İletişime Geçin</h1>
+      <p>Her türlü soru, görüş ve önerileriniz için formu doldurun.</p>
+    </div>
+
+    <div class="alert" id="formAlert"></div>
+
+    <form class="contact-form" id="contactForm" novalidate>
+      <div class="form-group">
+        <label for="name">İsim</label>
+        <input type="text" id="name" name="name" required>
+      </div>
+
+      <div class="form-group">
+        <label for="email">E-posta</label>
+        <input type="email" id="email" name="email" required>
+      </div>
+
+      <div class="form-group">
+        <label for="subject">Konu</label>
+        <select id="subject" name="subject" required>
+          <option value="">Bir konu seçin</option>
+          <option value="Destek">Destek</option>
+          <option value="Geri Bildirim">Geri Bildirim</option>
+          <option value="İşbirliği">İşbirliği</option>
+          <option value="Diğer">Diğer</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="message">Mesajınız</label>
+        <textarea id="message" name="message" rows="5" required></textarea>
+      </div>
+
+      <button type="submit" class="btn">Mesaj Gönder</button>
+    </form>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="copyright">
+        <p>&copy; 2024 CineVibe. Tüm hakları saklıdır.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const form = document.getElementById('contactForm');
+    const alertBox = document.getElementById('formAlert');
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      // Tüm inputları sıfırla
+      const inputs = form.querySelectorAll('input, select, textarea');
+      inputs.forEach(input => input.classList.remove('error-input'));
+
+      let errors = [];
+
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const subject = document.getElementById('subject').value;
+      const message = document.getElementById('message').value.trim();
+
+      if (name.length < 2) {
+        errors.push('İsim en az 2 karakter olmalıdır.');
+        document.getElementById('name').classList.add('error-input');
+      }
+
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailPattern.test(email)) {
+        errors.push('Geçerli bir e-posta adresi giriniz.');
+        document.getElementById('email').classList.add('error-input');
+      }
+
+      if (!subject) {
+        errors.push('Lütfen bir konu seçin.');
+        document.getElementById('subject').classList.add('error-input');
+      }
+
+      if (message.length < 10) {
+        errors.push('Mesaj en az 10 karakter olmalıdır.');
+        document.getElementById('message').classList.add('error-input');
+      }
+
+      if (errors.length > 0) {
+        alertBox.className = 'alert error';
+        alertBox.innerHTML = errors.join('<br>');
+        alertBox.style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        alertBox.className = 'alert success';
+        alertBox.innerHTML = 'Mesajınız başarıyla gönderildi. Teşekkür ederiz!';
+        alertBox.style.display = 'block';
+        form.reset();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    });
+  </script>
+</body>
+</html>
